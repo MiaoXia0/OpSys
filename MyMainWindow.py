@@ -86,9 +86,9 @@ class MyMainWindow(QMainWindow):
         self.ui.lineBlockNum.setText(str(NumBlock))
         self.ui.lineLenAddr.setText(str(int(log(lenmem, 2))))
         global m
-        m = log(lenmem, 2)
+        m = int(log(lenmem, 2))
         global n
-        n = log(lenblo, 2)
+        n = int(log(lenblo, 2))
 
     def QuSet(self):  # 刷新队列显示
         self.ui.lineReady.setText('')
@@ -113,15 +113,25 @@ class MyMainWindow(QMainWindow):
         if NOW >= MAX:
             QMessageBox.warning(self, '创建进程', '内存不足！', QMessageBox.Close)
             return
-        # TODO 申请资源
+
+        # (申请资源)
+
         if pid in ready_list:
             QMessageBox.warning(self, '创建进程', '进程已存在！', QMessageBox.Close)
             return
         pcb = PCB(name, pid, con, 'ready')
-        ready_list.append({'pcb': pcb, 'pid': pid, 'run': False, 'runned': False, 'timeslice': 0})
+        ready_list.append({'pcb': pcb,
+                           'pid': pid,
+                           'run': False,
+                           'runned': False,
+                           'timeslice': 0})
         NOW += 1
         global procdf
-        procdf = procdf.append({'进程名': name, 'PID': pid, '进程状态': 'ready', '内容': con, '所需时间': pcb.time},
+        procdf = procdf.append({'进程名': name,
+                                'PID': pid,
+                                '进程状态': 'ready',
+                                '内容': con,
+                                '所需时间': pcb.time},
                                ignore_index=True)
 
         modelProc = pandasModel(procdf)
@@ -300,7 +310,7 @@ class MyMainWindow(QMainWindow):
             if indexj is None:
                 return
 
-            if pages[j].write == 1:
+            if pages[indexj].write == 1:
                 QMessageBox.information(self, '消息', '将页%d写回磁盘第%d块\n' % (int(j), int(pages[indexj].dnumber)),
                                         QMessageBox.Close)
             pages[indexj].flag = 0
@@ -308,7 +318,6 @@ class MyMainWindow(QMainWindow):
             pages[index].flag = 1
             pages[index].write = 0
             pagedf.loc[pagedf['页号'] == lnumber, '主存块号'] = pages[indexj].pnumber
-            self.ui.tablePages.setModel(pandasModel(pagedf))
             QMessageBox.information(self, '消息', '淘汰主存块%d中的页%d，从磁盘第%d块中调入页%d\n' % (int(pages[indexj].pnumber),
                                                                                   int(j),
                                                                                   int(pages[index].dnumber),
@@ -316,6 +325,7 @@ class MyMainWindow(QMainWindow):
                                     QMessageBox.Close)
             pagedf.loc[pagedf['页号'] == pages[indexj].pnumber, '主存块号'] = -1
             pages[indexj].pnumber = -1
+            self.ui.tablePages.setModel(pandasModel(pagedf))
         elif len(p) < LenMem:  # 主存未满，直接调入主存
             p.append(lnumber)
             global memused
@@ -351,7 +361,11 @@ class MyMainWindow(QMainWindow):
         if index is None:
             return
         while True:
-            if lnumber > LenMem:
+            exist = False
+            for lnum in pages:
+                if lnumber == lnum:  # 查找所请求页面是否存在
+                    exist = True
+            if exist:
                 QMessageBox.warning(self, '错误', '不存在该页', QMessageBox.Close)
                 return
             if pages[index].flag == 1:  # 在主存
@@ -359,8 +373,10 @@ class MyMainWindow(QMainWindow):
                 paddress: int = int(pnumber << n) | ad
                 QMessageBox.information(self,
                                         '结果',
-                                        '逻辑地址为%016d, 对应物理地址为%016d' % (
+                                        '逻辑地址为%0*d, 对应物理地址为%0*d' % (
+                                            m,
                                             int(str(bin(laddress)).split('b', 2)[1]),
+                                            m,
                                             int(str(bin(paddress)).split('b', 2)[1])),
                                         QMessageBox.Close)
                 if ui.radioWrite.isChecked():
