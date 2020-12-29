@@ -366,7 +366,6 @@ class MyMainWindow(QMainWindow):
                 if ui.radioWrite.isChecked():
                     pages[index].write = 1
                     global pagedf
-
                     pagedf.loc[pagedf['页号'] == lnumber, '是否修改'] = 1
                     self.ui.tablePages.setModel(pandasModel(pagedf))
                 break  # 结束
