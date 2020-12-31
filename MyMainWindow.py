@@ -84,9 +84,9 @@ class MyMainWindow(QMainWindow):
         global NumBlock
         NumBlock = int(lenmem / lenblo)
         self.ui.lineBlockNum.setText(str(NumBlock))
-        self.ui.lineLenAddr.setText(str(int(log(lenmem, 2))))
         global m
         m = int(log(lenmem, 2))
+        self.ui.lineLenAddr.setText(str(m))
         global n
         n = int(log(lenblo, 2))
 
