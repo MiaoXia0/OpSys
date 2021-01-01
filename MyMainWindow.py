@@ -326,6 +326,7 @@ class MyMainWindow(QMainWindow):
             pagedf.loc[pagedf['页号'] == pages[indexj].pnumber, '主存块号'] = -1
             pages[indexj].pnumber = -1
             self.ui.tablePages.setModel(pandasModel(pagedf))
+            self.listMemRefresh()
         elif len(p) < LenMem:  # 主存未满，直接调入主存
             p.append(lnumber)
             global memused
@@ -344,7 +345,6 @@ class MyMainWindow(QMainWindow):
                                     QMessageBox.Close)
         pagedf.loc[pagedf['页号'] == lnumber, '是否在主存'] = 1
         self.ui.tablePages.setModel(pandasModel(pagedf))
-
         self.listMemRefresh()
 
     def pageModify(self):
