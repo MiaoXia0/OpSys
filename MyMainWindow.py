@@ -46,8 +46,8 @@ class Page:  # 页
 pages: List[Page] = []  # 页表
 p: List[int] = []  # 主存中的页号
 memused: List[int] = []  # 使用的主存块
-LenMem = 4  # 内存中最多页数
-NumBlock = 4  # 内存中最多块数
+LenMem: int = 4  # 内存中最多页数
+NumBlock: int = 4  # 内存中最多块数
 m: int = 12  # 地址长度
 n: int = 10  # 块内地址长度
 
